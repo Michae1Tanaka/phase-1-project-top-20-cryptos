@@ -1,0 +1,8 @@
+
+tr,td,th{
+    border: 2px solid black;
+}
+#main-table{
+    width:100%;
+    border-collapse:collapse;
+}

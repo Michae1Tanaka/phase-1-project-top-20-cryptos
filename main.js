@@ -23,8 +23,8 @@ function createTableHeaders() {
   properties.forEach((property) => {
       const tableHeaders = document.createElement("th");
       tableHeaders.textContent = property;
+      tableHeaders.id = `${property.toLowerCase().replace(/\s+/g,"-")}-header`
       tableHeadRow.appendChild(tableHeaders);
-      
     });
 }
 
