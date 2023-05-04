@@ -1,6 +1,3 @@
-//On content load, create table headers and table content based on api data
-document.addEventListener("DOMContentLoaded", createTableHeaders);
-
 //Global variables
 const topTenCryptoApi = "https://api.coincap.io/v2/assets?limit=10";
 const elevenThroughTwentyCryptoApi =
@@ -14,6 +11,7 @@ const marketCaps = [];
 const volume = [];
 const prices = [];
 const explorers = [];
+let rowIndex = 1;
 
 //Callback Functions
 function createTableHeaders() {
@@ -27,10 +25,10 @@ function createTableHeaders() {
     "Explorer",
   ];
   properties.forEach(createHeaders);
-
+//creates and appends headers for each element in the properties array above.
   function createHeaders(property) {
+    const tableHeaders = createElement("th");
     const attributeProperty = `${property.toLowerCase().replace(/\s+/g, "-")}`;
-    const tableHeaders = document.createElement("th");
     tableHeaders.textContent = property;
     tableHeaders.id = `${attributeProperty}-header`;
     tableHeaders.classList = `${attributeProperty}-column`;
@@ -38,13 +36,13 @@ function createTableHeaders() {
   }
   fetchTopTenCryptos();
 }
-
+//fetches data from the api and pushes the wanted data to a global variable to be accessed later
 function fetchTopTenCryptos() {
   fetch(topTenCryptoApi)
-    .then((r) => r.json())
-    .then((cryptoArrs) => {
-      const cryptoObjs = cryptoArrs.data;
-      cryptoObjs.forEach((crypto) => {
+  .then((r) => r.json())
+  .then((cryptoArrs) => {
+    const cryptoObjs = cryptoArrs.data;
+    cryptoObjs.forEach((crypto) => {
         ranks.push(crypto.rank);
         names.push(crypto.name);
         symbols.push(crypto.symbol);
@@ -53,16 +51,25 @@ function fetchTopTenCryptos() {
         prices.push(crypto.priceUsd);
         explorers.push(crypto.explorer);
       });
-      createRankColumn()
+      createRowsandColumns();
     });
 }
-function createRankColumn (){
-  
-  ranks.forEach(rank=>{
-    const tableRow = document.createElement("tr");
-    const tableData = document.createElement("td");
-    tableData.textContent = rank
-tableRow.appendChild(tableData)
-tableBody.appendChild(tableRow)
-  })
+//creates each row and column of the table and attaches the data to each cell.
+function createRowsandColumns() {
+  for (let i = 0; i < ranks.length; i++) {
+    const tableRow = createElement("tr");
+    tableRow.id = `row${rowIndex++}`;
+    tableBody.appendChild(tableRow);
+    const rowData = [ranks[i], names[i], symbols[i], marketCaps[i], volume[i], prices[i], explorers[i]];
+    for (let j = 0; j < rowData.length; j++) {
+      const tableData = createElement("td");
+      tableData.textContent = rowData[j];
+      tableRow.appendChild(tableData);
+    }
+  }
 }
+//I dont know if needed but felt it was nice to have a function to create elements. Feels kind of useless since it onle cuts out the word document from the equation.
+const createElement = (element) => document.createElement(element);
+
+//Execute functions
+createTableHeaders();
