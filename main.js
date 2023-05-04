@@ -46,16 +46,16 @@ function fetchTopTenCryptos() {
         ranks.push(crypto.rank);
         names.push(crypto.name);
         symbols.push(crypto.symbol);
-        marketCaps.push(crypto.marketCapUsd);
-        volume.push(crypto.volumeUsd24Hr);
-        prices.push(crypto.priceUsd);
+        marketCaps.push(parseFloat(crypto.marketCapUsd).toFixed(2));
+        volume.push(parseFloat(crypto.volumeUsd24Hr).toFixed(2));
+        prices.push(parseFloat(crypto.priceUsd).toFixed(2));
         explorers.push(crypto.explorer);
       });
-      createRowsandColumns();
+      createRowsAndColumns();
     });
 }
 //creates each row and column of the table and attaches the data to each cell.
-function createRowsandColumns() {
+function createRowsAndColumns() {
   for (let i = 0; i < ranks.length; i++) {
     const tableRow = createElement("tr");
     tableRow.id = `row${rowIndex++}`;
@@ -63,12 +63,22 @@ function createRowsandColumns() {
     const rowData = [ranks[i], names[i], symbols[i], marketCaps[i], volume[i], prices[i], explorers[i]];
     for (let j = 0; j < rowData.length; j++) {
       const tableData = createElement("td");
+      const columnClass = tableHeadRow.children[j].classList[0]
+      tableData.classList.add(columnClass)
+      if(j === rowData.length -1 ){
+        const explorerLink = createElement('a')
+        explorerLink.href = rowData[j]
+        explorerLink.textContent = rowData[j]
+        explorerLink.target = "_blank"
+        tableData.appendChild(explorerLink)
+      } else {
       tableData.textContent = rowData[j];
-      tableRow.appendChild(tableData);
+    }
+    tableRow.appendChild(tableData);
     }
   }
 }
-//I dont know if needed but felt it was nice to have a function to create elements. Feels kind of useless since it onle cuts out the word document from the equation.
+//I dont know if this is needed. Feels kind of useless since it only cuts out the word, document, from the norm way.
 const createElement = (element) => document.createElement(element);
 
 //Execute functions
