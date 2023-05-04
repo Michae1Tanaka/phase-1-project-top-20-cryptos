@@ -1,85 +1,109 @@
-//Global variables
+// Global variables
 const topTenCryptoApi = "https://api.coincap.io/v2/assets?limit=10";
-const elevenThroughTwentyCryptoApi =
-  "https://api.coincap.io/v2/assets?limit=10&offset=10";
 const tableHeadRow = document.getElementById("table-head-row");
 const tableBody = document.getElementById("main-table-body");
-const ranks = [];
-const names = [];
-const symbols = [];
-const marketCaps = [];
-const volume = [];
-const prices = [];
-const explorers = [];
 let rowIndex = 1;
 
-//Callback Functions
+// Callback Functions
 function createTableHeaders() {
   const properties = [
     "Rank",
     "Name",
     "Symbol",
     "Market Cap",
-    "Volume 24Hr",
+    "Percent Change 24Hr",
     "Price",
     "Explorer",
   ];
-  properties.forEach(createHeaders);
-//creates and appends headers for each element in the properties array above.
-  function createHeaders(property) {
-    const tableHeaders = createElement("th");
+
+  properties.forEach((property) => {
+    const tableHeaders = document.createElement("th");
     const attributeProperty = `${property.toLowerCase().replace(/\s+/g, "-")}`;
     tableHeaders.textContent = property;
     tableHeaders.id = `${attributeProperty}-header`;
     tableHeaders.classList = `${attributeProperty}-column`;
     tableHeadRow.appendChild(tableHeaders);
-  }
-  fetchTopTenCryptos();
+  });
 }
-//fetches data from the api and pushes the wanted data to a global variable to be accessed later
+
 function fetchTopTenCryptos() {
-  fetch(topTenCryptoApi)
-  .then((r) => r.json())
-  .then((cryptoArrs) => {
-    const cryptoObjs = cryptoArrs.data;
-    cryptoObjs.forEach((crypto) => {
-        ranks.push(crypto.rank);
-        names.push(crypto.name);
-        symbols.push(crypto.symbol);
-        marketCaps.push(parseFloat(crypto.marketCapUsd).toFixed(2));
-        volume.push(parseFloat(crypto.volumeUsd24Hr).toFixed(2));
-        prices.push(parseFloat(crypto.priceUsd).toFixed(2));
-        explorers.push(crypto.explorer);
-      });
-      createRowsAndColumns();
+  return fetch(topTenCryptoApi)
+    .then((r) => r.json())
+    .then((cryptoArrs) => {
+      const cryptoObjs = cryptoArrs.data;
+      return cryptoObjs.map((crypto) => ({
+        rank: crypto.rank,
+        name: crypto.name,
+        symbol: crypto.symbol,
+        marketCap:
+          "$" +
+          parseFloat(crypto.marketCapUsd).toLocaleString("en-US", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }) +
+          "b",
+        percentChange: parseFloat(crypto.changePercent24Hr).toFixed(2) + "%",
+        price:
+          "$" +
+          parseFloat(crypto.priceUsd).toLocaleString("en-US", {
+            style: "decimal",
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        explorer: crypto.explorer,
+      }));
     });
 }
-//creates each row and column of the table and attaches the data to each cell.
-function createRowsAndColumns() {
-  for (let i = 0; i < ranks.length; i++) {
-    const tableRow = createElement("tr");
+
+function createRowsAndColumns(data) {
+  data.forEach((crypto) => {
+    const tableRow = document.createElement("tr");
     tableRow.id = `row${rowIndex++}`;
     tableBody.appendChild(tableRow);
-    const rowData = [ranks[i], names[i], symbols[i], marketCaps[i], volume[i], prices[i], explorers[i]];
-    for (let j = 0; j < rowData.length; j++) {
-      const tableData = createElement("td");
-      const columnClass = tableHeadRow.children[j].classList[0]
-      tableData.classList.add(columnClass)
-      if(j === rowData.length -1 ){
-        const explorerLink = createElement('a')
-        explorerLink.href = rowData[j]
-        explorerLink.textContent = rowData[j]
-        explorerLink.target = "_blank"
-        tableData.appendChild(explorerLink)
-      } else {
-      tableData.textContent = rowData[j];
-    }
-    tableRow.appendChild(tableData);
-    }
-  }
-}
-//I dont know if this is needed. Feels kind of useless since it only cuts out the word, document, from the norm way.
-const createElement = (element) => document.createElement(element);
 
-//Execute functions
+    const rowData = [
+      crypto.rank,
+      crypto.name,
+      crypto.symbol,
+      crypto.marketCap,
+      crypto.percentChange,
+      crypto.price,
+      crypto.explorer,
+    ];
+
+    rowData.forEach((cellData, index) => {
+      const tableData = document.createElement("td");
+      const columnClass = tableHeadRow.children[index].classList[0];
+      tableData.classList.add(columnClass);
+
+      if (index === rowData.length - 1) {
+        const explorerLink = document.createElement("a");
+        explorerLink.href = cellData;
+        explorerLink.textContent = "Explorer Link";
+        explorerLink.target = "_blank";
+        tableData.appendChild(explorerLink);
+      } else {
+        tableData.textContent = cellData;
+      }
+      tableRow.appendChild(tableData);
+    });
+  });
+}
+
+function refreshTable() {
+  fetchTopTenCryptos().then((data) => {
+    // Clear the existing table body
+    while (tableBody.firstChild) {
+      tableBody.removeChild(tableBody.firstChild);
+    }
+
+    rowIndex = 1;
+    createRowsAndColumns(data);
+  });
+}
+
+// Execute functions
 createTableHeaders();
+refreshTable();
+setInterval(refreshTable, 5000)

@@ -1,7 +1,41 @@
-tr,td,th{
+tr,
+td,
+th {
+    width: 100%;
     border: 2px solid black;
 }
-#main-table{
-    width:100%;
-    border-collapse:collapse;
+
+#main-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+
+.rank-column {
+    width: 5%;
+}
+
+.name-column {
+    width: 10%
+}
+
+.symbol-column {
+    width: 5%
+}
+
+.market-cap-column {
+    width: 20%
+}
+
+.percent-change-24hr-column {
+    width: 10%;
+}
+
+.price-column {
+    width: 10%
+}
+
+.explorer-column {
+    width: 20%
 }
