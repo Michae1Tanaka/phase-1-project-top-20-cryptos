@@ -37,7 +37,7 @@ function fetchTopTenCryptos() {
         symbol: crypto.symbol,
         marketCap:
           "$" +
-          parseFloat(crypto.marketCapUsd).toLocaleString("en-US", {
+          parseFloat(crypto.marketCapUsd /10000000000).toLocaleString("en-US", {
             style: "decimal",
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
@@ -100,10 +100,22 @@ function refreshTable() {
 
     rowIndex = 1;
     createRowsAndColumns(data);
+    const percentChangeTableRows = document.querySelectorAll("td.percent-change-24hr-column")
+    for(let i = 0; i < percentChangeTableRows.length; i++){
+      let percentChangeAsNumber = parseFloat(percentChangeTableRows[i].textContent ,10)
+      if(percentChangeAsNumber < 0){
+        console.log(percentChangeAsNumber)
+        percentChangeTableRows[i].classList.remove("percent-change-24hr-column")
+        percentChangeTableRows[i].classList.add('percent-change-24hr-column-red')
+      } else {
+        console.log(percentChangeAsNumber)
+        percentChangeTableRows[i].classList.remove("percent-change-24hr-column")
+        percentChangeTableRows[i].classList.add('percent-change-24hr-column-green')
+      }
+    } 
   });
 }
-
 // Execute functions
 createTableHeaders();
-refreshTable();
-setInterval(refreshTable, 5000)
+refreshTable()
+setInterval(refreshTable, 5000);
