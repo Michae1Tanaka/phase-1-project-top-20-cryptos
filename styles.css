@@ -15,7 +15,7 @@ th {
 /* #main-table-head{
 
 } */
-#main-table>tbody>tr:nth-child(n+11){
+.hidden{
     display:none
 }
 
@@ -24,8 +24,9 @@ th {
     border-collapse: collapse;
     margin: 20px auto;
     height: 50%;
-    overflow : hidden;
+    overflow-x: auto;
 }
+
 
 #table-head-row {
     background-color: #507AA6;
@@ -51,7 +52,8 @@ tr:nth-child(odd) {
 
 .symbol-column {
     width: 5%;
-    text-align: center
+    text-align: center;
+    position:sticky
 }
 
 .market-cap-column {
@@ -92,4 +94,4 @@ td.green {
     background-color: green;
     transition: background-color 0.5s;
   }
-  #extend-button
+

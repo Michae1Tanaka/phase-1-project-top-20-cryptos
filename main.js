@@ -3,8 +3,8 @@ document.addEventListener("DOMContentLoaded", createTableHeaders);
 const topTwentyCryptoApi = "https://api.coincap.io/v2/assets?limit=20";
 const tableHeadRow = document.getElementById("table-head-row");
 const tableBody = document.getElementById("main-table-body");
-const showTenBtn = document.getElementById('extend-button')
 let rowIndex = 1;
+const showTenBtn = document.getElementById("extend-button");
 
 //Executable Functions
 
@@ -86,6 +86,10 @@ function createRowsAndColumns(topTwentyCryptosArr) {
   topTwentyCryptosArr.forEach((crypto) => {
     const tableRow = document.createElement("tr");
     tableRow.id = `row${rowIndex++}`;
+    if (`${rowIndex}` > 11) {
+      tableRow.classList.add("hidden");
+      tableRow.classList.add("default");
+    }
     tableBody.appendChild(tableRow);
     const rowData = [
       crypto.rank,
@@ -101,6 +105,7 @@ function createRowsAndColumns(topTwentyCryptosArr) {
       const tableData = document.createElement("td");
       const columnClass = tableHeadRow.children[index].classList[0];
       tableData.id = `${tableRow.id}-column${++index}`;
+
       tableData.classList.add(columnClass);
 
       if (index === rowData.length) {
@@ -116,10 +121,17 @@ function createRowsAndColumns(topTwentyCryptosArr) {
     });
   });
 }
-
-function showTenBtnHandler(e){
-  console.log(e)
-  e.target.classList.add('pressed')
+//when btn is pressed, other cryptos 11-20 will show
+function showTenBtnHandler(e) {
+  const hiddenRows = document.querySelectorAll(".default");
+  hiddenRows.forEach((cryptoRow) => {
+    cryptoRow.classList.toggle("hidden");
+  });
+  if (e.target.textContent === "Show 10 More"){
+    e.target.textContent = 'Hide 10'
+  } else{
+    e.target.textContent = 'Show 10 More'
+  }
 }
 //Helper Functions
 function createCellId(columnIndex, rowIndex) {
@@ -148,6 +160,6 @@ function formatPrice(priceData) {
   );
 }
 // Execute functions
-showTenBtn.addEventListener('click',showTenBtnHandler)
+showTenBtn.addEventListener("click", showTenBtnHandler);
 refreshTable();
 setInterval(refreshTable, 5000);
