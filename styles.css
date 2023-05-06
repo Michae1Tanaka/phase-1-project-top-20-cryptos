@@ -7,7 +7,7 @@ body {
 tr,
 td,
 th {
-    width: 100%;
+    width: 10%;
     border: 2px solid black;
     padding: 8px 16px;
 }
@@ -15,11 +15,16 @@ th {
 /* #main-table-head{
 
 } */
+#main-table>tbody>tr:nth-child(n+11){
+    display:none
+}
 
 #main-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px auto
+    margin: 20px auto;
+    height: 50%;
+    overflow : hidden;
 }
 
 #table-head-row {
@@ -54,8 +59,8 @@ tr:nth-child(odd) {
     text-align: center
 }
 
-.percent-change-24hr-column-red,
-.percent-change-24hr-column-green,
+.red,
+.green,
 #table-head-row {
     width: 10%;
     text-align: center;
@@ -71,10 +76,20 @@ tr:nth-child(odd) {
     text-align: center
 }
 
-td.percent-change-24hr-column-red {
+td.red {
     color: red;
 }
 
-td.percent-change-24hr-column-green {
+td.green {
     color: green
 }
+.flash-red {
+    background-color: red;
+    transition: background-color 0.5s;
+  }
+  
+  .flash-green {
+    background-color: green;
+    transition: background-color 0.5s;
+  }
+  #extend-button

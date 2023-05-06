@@ -1,18 +1,53 @@
+document.addEventListener("DOMContentLoaded", createTableHeaders);
 // Global variables
-const topTenCryptoApi = "https://api.coincap.io/v2/assets?limit=10";
+const topTwentyCryptoApi = "https://api.coincap.io/v2/assets?limit=20";
 const tableHeadRow = document.getElementById("table-head-row");
 const tableBody = document.getElementById("main-table-body");
+const showTenBtn = document.getElementById('extend-button')
 let rowIndex = 1;
 
+//Executable Functions
+
+function refreshTable() {
+  fetchTopTwentyCryptos().then((topTwentyCryptosArr) => {
+    // Clear the existing table body
+    while (tableBody.firstChild) {
+      tableBody.removeChild(tableBody.firstChild);
+    }
+    rowIndex = 1;
+    //creates rows and columns of table after refresh of data comes in
+    createRowsAndColumns(topTwentyCryptosArr);
+
+    //changes color of percent change text so when its positive its green and red when negative
+    const percentChangeTableRows = document.querySelectorAll(
+      "td.percent-change-24hr-column"
+    );
+    for (let i = 0; i < percentChangeTableRows.length; i++) {
+      let percentChangeAsNumber = parseFloat(
+        percentChangeTableRows[i].textContent,
+        10
+      );
+      if (percentChangeAsNumber < 0) {
+        percentChangeTableRows[i].classList.remove("green");
+        percentChangeTableRows[i].classList.add("red");
+      } else {
+        percentChangeTableRows[i].classList.remove("red");
+        percentChangeTableRows[i].classList.add("green");
+      }
+    }
+  });
+}
+
 // Callback Functions
+//creates table headers
 function createTableHeaders() {
   const properties = [
     "Rank",
     "Name",
     "Symbol",
-    "Market Cap",
-    "Percent Change 24Hr",
     "Price",
+    "Percent Change 24Hr",
+    "Market Cap",
     "Explorer",
   ];
 
@@ -25,62 +60,53 @@ function createTableHeaders() {
     tableHeadRow.appendChild(tableHeaders);
   });
 }
-
-function fetchTopTenCryptos() {
-  return fetch(topTenCryptoApi)
+//fetches data of top twenty cryptos
+function fetchTopTwentyCryptos() {
+  const requestOptions = {
+    method: "GET",
+    redirect: "follow",
+  };
+  return fetch(topTwentyCryptoApi, requestOptions)
     .then((r) => r.json())
-    .then((cryptoArrs) => {
-      const cryptoObjs = cryptoArrs.data;
-      return cryptoObjs.map((crypto) => ({
+    .then((topTwentyCryptosArr) => {
+      const cryptoObj = topTwentyCryptosArr.data;
+      return cryptoObj.map((crypto) => ({
         rank: crypto.rank,
         name: crypto.name,
         symbol: crypto.symbol,
-        marketCap:
-          "$" +
-          parseFloat(crypto.marketCapUsd /10000000000).toLocaleString("en-US", {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }) +
-          "b",
+        price: formatPrice(crypto.priceUsd),
         percentChange: parseFloat(crypto.changePercent24Hr).toFixed(2) + "%",
-        price:
-          "$" +
-          parseFloat(crypto.priceUsd).toLocaleString("en-US", {
-            style: "decimal",
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }),
-        explorer: crypto.explorer,
+        marketCap: formatMarketCap(crypto.marketCapUsd),
       }));
     });
 }
 
-function createRowsAndColumns(data) {
-  data.forEach((crypto) => {
+//creates a table row for each category that is being tracked
+function createRowsAndColumns(topTwentyCryptosArr) {
+  topTwentyCryptosArr.forEach((crypto) => {
     const tableRow = document.createElement("tr");
     tableRow.id = `row${rowIndex++}`;
     tableBody.appendChild(tableRow);
-
     const rowData = [
       crypto.rank,
       crypto.name,
       crypto.symbol,
-      crypto.marketCap,
-      crypto.percentChange,
       crypto.price,
+      crypto.percentChange,
+      crypto.marketCap,
       crypto.explorer,
     ];
-
+    //Inputs the Data collected into the table
     rowData.forEach((cellData, index) => {
       const tableData = document.createElement("td");
       const columnClass = tableHeadRow.children[index].classList[0];
+      tableData.id = `${tableRow.id}-column${++index}`;
       tableData.classList.add(columnClass);
 
-      if (index === rowData.length - 1) {
+      if (index === rowData.length) {
         const explorerLink = document.createElement("a");
         explorerLink.href = cellData;
-        explorerLink.textContent = "Explorer Link";
+        explorerLink.textContent = `${crypto.name} Explorer`;
         explorerLink.target = "_blank";
         tableData.appendChild(explorerLink);
       } else {
@@ -91,31 +117,37 @@ function createRowsAndColumns(data) {
   });
 }
 
-function refreshTable() {
-  fetchTopTenCryptos().then((data) => {
-    // Clear the existing table body
-    while (tableBody.firstChild) {
-      tableBody.removeChild(tableBody.firstChild);
-    }
+function showTenBtnHandler(e){
+  console.log(e)
+  e.target.classList.add('pressed')
+}
+//Helper Functions
+function createCellId(columnIndex, rowIndex) {
+  return `cell-row${rowIndex}-column${columnIndex}`;
+}
+function formatMarketCap(marketCapData) {
+  return (
+    "$" +
+    parseFloat(marketCapData / 10000000000).toLocaleString("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) +
+    "b"
+  );
+}
 
-    rowIndex = 1;
-    createRowsAndColumns(data);
-    const percentChangeTableRows = document.querySelectorAll("td.percent-change-24hr-column")
-    for(let i = 0; i < percentChangeTableRows.length; i++){
-      let percentChangeAsNumber = parseFloat(percentChangeTableRows[i].textContent ,10)
-      if(percentChangeAsNumber < 0){
-        console.log(percentChangeAsNumber)
-        percentChangeTableRows[i].classList.remove("percent-change-24hr-column")
-        percentChangeTableRows[i].classList.add('percent-change-24hr-column-red')
-      } else {
-        console.log(percentChangeAsNumber)
-        percentChangeTableRows[i].classList.remove("percent-change-24hr-column")
-        percentChangeTableRows[i].classList.add('percent-change-24hr-column-green')
-      }
-    } 
-  });
+function formatPrice(priceData) {
+  return (
+    "$" +
+    parseFloat(priceData).toLocaleString("en-US", {
+      style: "decimal",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  );
 }
 // Execute functions
-createTableHeaders();
-refreshTable()
+showTenBtn.addEventListener('click',showTenBtnHandler)
+refreshTable();
 setInterval(refreshTable, 5000);
