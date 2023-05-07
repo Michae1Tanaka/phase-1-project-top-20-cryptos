@@ -5,6 +5,7 @@ const tableHeadRow = document.getElementById("table-head-row");
 const tableBody = document.getElementById("main-table-body");
 let rowIndex = 1;
 const showTenBtn = document.getElementById("extend-button");
+let tableExpanded = false;
 
 //Executable Functions
 
@@ -86,9 +87,12 @@ function createRowsAndColumns(topTwentyCryptosArr) {
   topTwentyCryptosArr.forEach((crypto) => {
     const tableRow = document.createElement("tr");
     tableRow.id = `row${rowIndex++}`;
-    if (`${rowIndex}` > 11) {
+    if (`${rowIndex}` > 11 && !tableExpanded) {
       tableRow.classList.add("hidden");
-      tableRow.classList.add("default");
+      tableRow.classList.add('default')
+      
+    } else if (`${rowIndex}` > 11 && tableExpanded) {
+      tableRow.classList.add('default')
     }
     tableBody.appendChild(tableRow);
     const rowData = [
@@ -129,8 +133,10 @@ function showTenBtnHandler(e) {
   });
   if (e.target.textContent === "Show 10 More"){
     e.target.textContent = 'Hide 10'
+    tableExpanded = true
   } else{
     e.target.textContent = 'Show 10 More'
+    tableExpanded = false
   }
 }
 //Helper Functions
