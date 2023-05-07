@@ -5,6 +5,10 @@ const tableBody = document.getElementById("main-table-body");
 const showTenBtn = document.getElementById("extend-button");
 const compareForm = document.getElementById("compare-form");
 const cryptoDropDownList = document.getElementById("crypto-list");
+const cryptoSearchA = document.getElementById("search-a");
+const cryptoSearchB = document.getElementById("search-b");
+const comparisonContainer = document.getElementById("comparison-cotainer");
+const submitButton = document.querySelector("form>button");
 const percentChangeTableRows = document.querySelectorAll(
   "td.percent-change-24hr-column"
 );
@@ -39,13 +43,17 @@ function refreshTable() {
   });
 }
 function loadDataListOptions() {
-  fetchTopTwentyCryptos().then((topTwentyCryptosArr) => {
-    topTwentyCryptosArr.forEach((crypto) => {
-      const cryptoListOptions = document.createElement("option");
-      cryptoListOptions.value = crypto.name;
-      cryptoDropDownList.appendChild(cryptoListOptions);
+  fetchTopTwentyCryptos()
+    .then((topTwentyCryptosArr) => {
+      topTwentyCryptosArr.forEach((crypto) => {
+        const cryptoListOptions = document.createElement("option");
+        cryptoListOptions.value = crypto.name;
+        cryptoDropDownList.appendChild(cryptoListOptions);
+      });
+    })
+    .catch((error) => {
+      alert(error);
     });
-  });
 }
 
 // Callback Functions
@@ -150,9 +158,23 @@ function showTenBtnHandler(e) {
     tableExpanded = false;
   }
 }
+
 function compareBtnHandler(e) {
   e.preventDefault();
   console.log("I am an ETH Maxi");
+}
+
+function searchEventHandler(e) {
+  const cryptoA = cryptoSearchA.value;
+  const cryptoB = cryptoSearchB.value;
+  if (cryptoA !== "" && cryptoA === cryptoB) {
+    alert(
+      "You cannot choose 2 of the same options. Please change 1 of the options"
+    );
+    submitButton.disabled = true;
+  } else {
+    submitButton.disabled = false;
+  }
 }
 
 //Event Listeners
@@ -160,6 +182,8 @@ document.addEventListener("DOMContentLoaded", createTableHeaders);
 document.addEventListener("DOMContentLoaded", loadDataListOptions);
 compareForm.addEventListener("submit", compareBtnHandler);
 showTenBtn.addEventListener("click", showTenBtnHandler);
+cryptoSearchA.addEventListener("change", searchEventHandler);
+cryptoSearchB.addEventListener("change", searchEventHandler);
 
 //Helper Functions
 function createCellId(columnIndex, rowIndex) {
