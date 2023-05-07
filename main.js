@@ -125,7 +125,7 @@ function createRowsAndColumns(topTwentyCryptosArr) {
     });
   });
 }
-//when btn is pressed, other cryptos 11-20 will show
+//when btn is pressed, cryptos 11-20 will show
 function showTenBtnHandler(e) {
   const hiddenRows = document.querySelectorAll(".default");
   hiddenRows.forEach((cryptoRow) => {

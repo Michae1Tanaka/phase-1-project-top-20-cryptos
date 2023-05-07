@@ -24,7 +24,26 @@
         </tbody>
     </table>
     <div id="button-div">
-        <button id="extend-button" >Show 10 More</button>
+        <button id="extend-button">Show 10 More</button>
+    </div>
+    <div id="comparison-container">
+        <h2>Compare Crypto <span class="comparison">A</span>'s price with Crypto <span class="comparison">B</span>'s
+            Market Cap.</h2>
+        <section id="compare-section">
+            <form method="get">
+                <label for="crypto-a">Select crypto A:</label>
+                <input type="text" id="search-a" name="crypto-a" list="crypto-list">
+                <label for="crypto-b">Select crypto B:</label>
+                <input type="text" id="search-b" name="crypto-b" list="crypto-list">
+                </select>
+                <datalist id="crypto-list">
+                    <option value="Test1">
+                    <option value="Test2">
+                        <!-- Add the top twenty cryptos here -->
+                </datalist>
+                <button type="submit">Compare</button>
+            </form>
+        </section>
     </div>
     <script src="main.js"></script>
 </body>
