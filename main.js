@@ -3,8 +3,9 @@ document.addEventListener("DOMContentLoaded", createTableHeaders);
 const topTwentyCryptoApi = "https://api.coincap.io/v2/assets?limit=20";
 const tableHeadRow = document.getElementById("table-head-row");
 const tableBody = document.getElementById("main-table-body");
-let rowIndex = 1;
 const showTenBtn = document.getElementById("extend-button");
+const compareForm = document.getElementById("compare-form")
+let rowIndex = 1;
 let tableExpanded = false;
 
 //Executable Functions
@@ -125,6 +126,8 @@ function createRowsAndColumns(topTwentyCryptosArr) {
     });
   });
 }
+//Event Handlers
+
 //when btn is pressed, cryptos 11-20 will show
 function showTenBtnHandler(e) {
   const hiddenRows = document.querySelectorAll(".default");
@@ -138,6 +141,10 @@ function showTenBtnHandler(e) {
     e.target.textContent = 'Show 10 More'
     tableExpanded = false
   }
+}
+function compareBtnHandler(e){
+  e.preventDefault()
+  console.log('I am an ETH Maxi')
 }
 //Helper Functions
 function createCellId(columnIndex, rowIndex) {
@@ -165,7 +172,9 @@ function formatPrice(priceData) {
     })
   );
 }
-// Execute functions
+//Event Listeners
+compareForm.addEventListener('submit',compareBtnHandler)
 showTenBtn.addEventListener("click", showTenBtnHandler);
+// Execute functions
 refreshTable();
 setInterval(refreshTable, 5000);
