@@ -12,11 +12,8 @@ th {
     padding: 8px 16px;
 }
 
-/* #main-table-head{
-
-} */
-.hidden{
-    display:none
+.hidden {
+    display: none
 }
 
 #main-table {
@@ -33,8 +30,9 @@ th {
 }
 
 tr:nth-child(even) {
-    background-color: #d1dbf7
+    background-color: #d1dbf7;
 }
+
 
 tr:nth-child(odd) {
     background-color: #FFFFFF
@@ -53,7 +51,7 @@ tr:nth-child(odd) {
 .symbol-column {
     width: 5%;
     text-align: center;
-    position:sticky
+    position: sticky
 }
 
 .market-cap-column {
@@ -85,13 +83,51 @@ td.red {
 td.green {
     color: green
 }
+
 span.percent-red {
-    color: red;;
-  }
-  
+    color: red;
+    ;
+}
+
 span.percent-green {
-    color: green;;
-  }
-li>p{
-    display:inline;
+    color: green;
+    ;
+}
+
+li>p {
+    display: inline;
+}
+
+#comparison-container {
+    text-align: center;
+}
+
+#button-div {
+    display: flex;
+    justify-content: center;
+}
+
+div>button {
+    background-color: #507AA6;
+    color: white;
+    padding: 10px 10px;
+    border: none;
+
+}
+
+div>button:hover {
+    background-color: #507aa6a0;
+    cursor: pointer
+}
+
+form>button {
+    background-color: #507AA6;
+    border: none;
+    padding: 3px 5px;
+    color: white;
+}
+
+form>button:hover {
+    background-color: #507aa6a0;
+    cursor: pointer;
 }
