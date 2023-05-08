@@ -9,9 +9,7 @@ const cryptoSearchA = document.getElementById("search-a");
 const cryptoSearchB = document.getElementById("search-b");
 const comparisonContainer = document.getElementById("comparison-cotainer");
 const submitButton = document.querySelector("form>button");
-const percentChangeTableRows = document.querySelectorAll(
-  "td.percent-change-24hr-column"
-);
+const compareResultsDiv = document.getElementById("comparison-results");
 let rowIndex = 1;
 let tableExpanded = false;
 
@@ -24,8 +22,13 @@ function refreshTable() {
       tableBody.removeChild(tableBody.firstChild);
     }
     rowIndex = 1;
+
     //creates rows and columns of table after refresh of data comes in
     createRowsAndColumns(topTwentyCryptosArr);
+
+    const percentChangeTableRows = document.querySelectorAll(
+      ".percent-change-24hr-column"
+    );
     //changes color of percent change text so when its positive its green and red when negative
     for (let i = 0; i < percentChangeTableRows.length; i++) {
       let percentChangeAsNumber = parseFloat(
@@ -161,7 +164,22 @@ function showTenBtnHandler(e) {
 
 function compareBtnHandler(e) {
   e.preventDefault();
-  console.log("I am an ETH Maxi");
+  fetch(topTwentyCryptoApi)
+    .then((resp) => resp.json())
+    .then((topTwentyCryptosArr) => {
+      if (cryptoSearchA.value && cryptoSearchB.value) {
+        const newPrice = compareMarketCap(
+          cryptoSearchA.value,
+          cryptoSearchB.value,
+          topTwentyCryptosArr.data
+        );
+        const formattedPrice = formatPrice(newPrice);
+
+        const compareResults = document.createElement("h3");
+        compareResults.textContent = `${cryptoSearchA.value}'s price would be ${formattedPrice} with the same market cap as ${cryptoSearchB.value}`;
+        compareResultsDiv.appendChild(compareResults);
+      }
+    });
 }
 
 function searchEventHandler(e) {
@@ -192,7 +210,7 @@ function createCellId(columnIndex, rowIndex) {
 function formatMarketCap(marketCapData) {
   return (
     "$" +
-    parseFloat(marketCapData / 10000000000).toLocaleString("en-US", {
+    parseFloat(marketCapData / 1000000000).toLocaleString("en-US", {
       style: "decimal",
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -210,6 +228,22 @@ function formatPrice(priceData) {
       maximumFractionDigits: 2,
     })
   );
+}
+
+function compareMarketCap(cryptoA, cryptoB, topTwentyCryptosArr) {
+  const cryptoAData = topTwentyCryptosArr.find(
+    (crypto) => crypto.name === cryptoA
+  );
+  const cryptoBData = topTwentyCryptosArr.find(
+    (crypto) => crypto.name === cryptoB
+  );
+  const cryptoAMarketCap = cryptoAData.marketCapUsd;
+  const cryptoBMarketCap = cryptoBData.marketCapUsd;
+  console.log(cryptoAMarketCap)
+  console.log(cryptoBMarketCap)
+  const cryptoAPrice = cryptoAData.priceUsd;
+  const newPrice = (cryptoAPrice * cryptoBMarketCap) / cryptoAMarketCap;
+  return newPrice;
 }
 // Execute functions
 refreshTable();

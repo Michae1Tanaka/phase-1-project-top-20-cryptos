@@ -29,7 +29,7 @@
     <div id="comparison-container">
         <h2>Show Crypto <span class="comparison">A</span>'s price with the market cap of Crypto <span class="comparison">B</span></h2>
         <section id="compare-section">
-            <form method="get" id="compare-form">
+            <form  id="compare-form" method="get" action="https://api.coincap.io/v2/assets?limit=20">
                 <label for="crypto-a">Select crypto A:</label>
                 <input type="text" id="search-a" name="crypto-a" list="crypto-list" class="crypto-search">
                 <label for="crypto-b">Select crypto B:</label>
@@ -39,6 +39,8 @@
                         <!-- Top twenty cryptos will be generated here -->
                 </datalist>
                 <button type="submit">Compare</button>
+                <div id="comparison-results">
+                </div>
             </form>
         </section>
     </div>
