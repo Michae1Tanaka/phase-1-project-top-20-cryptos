@@ -10,6 +10,7 @@ const cryptoSearchB = document.getElementById("search-b");
 const comparisonContainer = document.getElementById("comparison-cotainer");
 const submitButton = document.querySelector("form>button");
 const compareResultsDiv = document.getElementById("comparison-results");
+const mainHeader = document.getElementById("mainHeader");
 let rowIndex = 1;
 let tableExpanded = false;
 
@@ -154,10 +155,12 @@ function showTenBtnHandler(e) {
     cryptoRow.classList.toggle("hidden");
   });
   if (e.target.textContent === "Show 10 More") {
+    mainHeader.textContent = "Top 20 Cryptos by Market Cap";
     e.target.textContent = "Hide 10";
     tableExpanded = true;
   } else {
     e.target.textContent = "Show 10 More";
+    mainHeader.textContent = "Top 10 Cryptos by Market Cap";
     tableExpanded = false;
   }
 }
@@ -168,17 +171,37 @@ function compareBtnHandler(e) {
     .then((resp) => resp.json())
     .then((topTwentyCryptosArr) => {
       if (cryptoSearchA.value && cryptoSearchB.value) {
+        const spanPercent = document.createElement("span");
         const newPrice = compareMarketCap(
           cryptoSearchA.value,
           cryptoSearchB.value,
           topTwentyCryptosArr.data
         );
         const formattedPrice = formatPrice(newPrice);
-
         const compareResults = document.createElement("h3");
         compareResults.textContent = `${cryptoSearchA.value}'s price would be ${formattedPrice} with the same market cap as ${cryptoSearchB.value}`;
         compareResultsDiv.appendChild(compareResults);
+
+        const extraInformationList = document.createElement("ul");
+        const extraInfo1 = document.createElement("li");
+        const extraInfo2 = document.createElement('p')
+        extraInfo1.id = "extraInfo";
+        spanPercent.textContent = marketCapDifference(
+          cryptoSearchA.value,
+          cryptoSearchB.value,
+          topTwentyCryptosArr.data,
+          extraInfo1,
+          extraInfo2,
+          spanPercent
+        );
+        extraInfo1.appendChild(spanPercent);
+        extraInfo1.insertBefore(extraInfo2,null)
+        compareResultsDiv.appendChild(extraInformationList);
+        extraInformationList.appendChild(extraInfo1);
       }
+    })
+    .catch(error=>{
+      alert(error)
     });
 }
 
@@ -239,11 +262,43 @@ function compareMarketCap(cryptoA, cryptoB, topTwentyCryptosArr) {
   );
   const cryptoAMarketCap = cryptoAData.marketCapUsd;
   const cryptoBMarketCap = cryptoBData.marketCapUsd;
-  console.log(cryptoAMarketCap)
-  console.log(cryptoBMarketCap)
   const cryptoAPrice = cryptoAData.priceUsd;
   const newPrice = (cryptoAPrice * cryptoBMarketCap) / cryptoAMarketCap;
   return newPrice;
+}
+
+function marketCapDifference(
+  cryptoA,
+  cryptoB,
+  topTwentyCryptosArr,
+  listElement,
+  paraElement,
+  spanElement
+) {
+  const cryptoAData = topTwentyCryptosArr.find(
+    (crypto) => crypto.name === cryptoA
+  );
+  const cryptoBData = topTwentyCryptosArr.find(
+    (crypto) => crypto.name === cryptoB
+  );
+  const cryptoAMarketCap = cryptoAData.marketCapUsd;
+  const cryptoBMarketCap = cryptoBData.marketCapUsd;
+  if (cryptoAMarketCap > cryptoBMarketCap) {
+    const newMultiplier =
+      "(" + (cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
+    spanElement.classList.add("percent-green");
+    listElement.textContent = `${cryptoA}'s market cap is `;
+    paraElement.textContent = ` larger than ${cryptoB}'s market cap.`
+    return newMultiplier;
+  } else if (cryptoAMarketCap < cryptoBMarketCap) {
+    const newMultiplier =
+    "(" + parseFloat(cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
+    spanElement.classList.add("percent-red");
+    listElement.textContent = `${cryptoA}'s market cap is `;
+    paraElement.textContent = ` smaller than ${cryptoB}'s market cap.`
+    return newMultiplier;
+  }
+  return listElement;
 }
 // Execute functions
 refreshTable();
