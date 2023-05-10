@@ -16,6 +16,7 @@ let tableExpanded = false;
 
 //Executable Functions
 
+//refreshes table data so the data is relatively up to date. It is called every 5 seconds.
 function refreshTable() {
   fetchTopTwentyCryptos().then((topTwentyCryptosArr) => {
     // Clear the existing table body
@@ -46,6 +47,8 @@ function refreshTable() {
     }
   });
 }
+
+//loads data list options to the input dropdown based on the top twenty cryptos present.
 function loadDataListOptions() {
   fetchTopTwentyCryptos()
     .then((topTwentyCryptosArr) => {
@@ -164,7 +167,7 @@ function showTenBtnHandler(e) {
     tableExpanded = false;
   }
 }
-
+//Compares the market cap and show what the price would be of coin a with the marketcap of coin b. then prints data to the dom showing what the results were.
 function compareBtnHandler(e) {
   e.preventDefault();
   fetch(topTwentyCryptoApi)
@@ -208,7 +211,7 @@ function compareBtnHandler(e) {
       alert(error)
     });
   }
-
+//If the two search options are the same an error appears and the compare button becomes disabled, forcing the user to switch one of the options.
 function searchEventHandler(e) {
   const cryptoA = cryptoSearchA.value;
   const cryptoB = cryptoSearchB.value;
@@ -231,9 +234,12 @@ cryptoSearchA.addEventListener("change", searchEventHandler);
 cryptoSearchB.addEventListener("change", searchEventHandler);
 
 //Helper Functions
+//creates cell attribute id's during table load 
 function createCellId(columnIndex, rowIndex) {
   return `cell-row${rowIndex}-column${columnIndex}`;
 }
+
+//Formats Market cap to a smaller and more readable number
 function formatMarketCap(marketCapData) {
   return (
     "$" +
@@ -246,6 +252,7 @@ function formatMarketCap(marketCapData) {
   );
 }
 
+//formats price to be rounded to the nearest cent.
 function formatPrice(priceData) {
   return (
     "$" +
@@ -256,7 +263,7 @@ function formatPrice(priceData) {
     })
   );
 }
-
+//compares market cap of two coins to come up with the price coin A would be with the same market cap as coin b.
 function compareMarketCap(cryptoA, cryptoB, topTwentyCryptosArr) {
   const cryptoAData = topTwentyCryptosArr.find(
     (crypto) => crypto.name === cryptoA
@@ -271,6 +278,7 @@ function compareMarketCap(cryptoA, cryptoB, topTwentyCryptosArr) {
   return newPrice;
 }
 
+//Compares the market cap of two coins to show the "x" times it is smaller or larger than.
 function marketCapDifference(
   cryptoA,
   cryptoB,
@@ -287,6 +295,8 @@ function marketCapDifference(
   );
   const cryptoAMarketCap = cryptoAData.marketCapUsd;
   const cryptoBMarketCap = cryptoBData.marketCapUsd;
+  console.log(cryptoAMarketCap)
+  console.log(cryptoBMarketCap)
   if (cryptoAMarketCap > cryptoBMarketCap) {
     const newMultiplier =
       "(" + (cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
@@ -302,7 +312,6 @@ function marketCapDifference(
     paraElement.textContent = ` smaller than ${cryptoB}'s market cap.`
     return newMultiplier;
   }
-  return listElement;
 }
 // Execute functions
 refreshTable();
