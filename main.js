@@ -173,9 +173,9 @@ function compareBtnHandler(e) {
   fetch(topTwentyCryptoApi)
     .then((resp) => resp.json())
     .then((topTwentyCryptosArr) => {
-      if(compareResultsDiv.hasChildNodes()){
-        compareResultsDiv.removeChild(compareResultsDiv.firstChild)
-        compareResultsDiv.removeChild(compareResultsDiv.lastChild)
+      if (compareResultsDiv.hasChildNodes()) {
+        compareResultsDiv.removeChild(compareResultsDiv.firstChild);
+        compareResultsDiv.removeChild(compareResultsDiv.lastChild);
       }
       if (cryptoSearchA.value && cryptoSearchB.value) {
         const spanPercent = document.createElement("span");
@@ -191,7 +191,7 @@ function compareBtnHandler(e) {
 
         const extraInformationList = document.createElement("ul");
         const extraInfo1 = document.createElement("li");
-        const extraInfo2 = document.createElement('p')
+        const extraInfo2 = document.createElement("p");
         extraInfo1.id = "extraInfo";
         spanPercent.textContent = marketCapDifference(
           cryptoSearchA.value,
@@ -202,15 +202,15 @@ function compareBtnHandler(e) {
           spanPercent
         );
         extraInfo1.appendChild(spanPercent);
-        extraInfo1.insertBefore(extraInfo2,null)
+        extraInfo1.insertBefore(extraInfo2, null);
         compareResultsDiv.appendChild(extraInformationList);
         extraInformationList.appendChild(extraInfo1);
       }
     })
-    .catch(error=>{
-      alert(error)
+    .catch((error) => {
+      alert(error);
     });
-  }
+}
 //If the two search options are the same an error appears and the compare button becomes disabled, forcing the user to switch one of the options.
 function searchEventHandler(e) {
   const cryptoA = cryptoSearchA.value;
@@ -234,7 +234,7 @@ cryptoSearchA.addEventListener("change", searchEventHandler);
 cryptoSearchB.addEventListener("change", searchEventHandler);
 
 //Helper Functions
-//creates cell attribute id's during table load 
+//creates cell attribute id's during table load
 function createCellId(columnIndex, rowIndex) {
   return `cell-row${rowIndex}-column${columnIndex}`;
 }
@@ -293,23 +293,21 @@ function marketCapDifference(
   const cryptoBData = topTwentyCryptosArr.find(
     (crypto) => crypto.name === cryptoB
   );
-  const cryptoAMarketCap = cryptoAData.marketCapUsd;
-  const cryptoBMarketCap = cryptoBData.marketCapUsd;
-  console.log(cryptoAMarketCap)
-  console.log(cryptoBMarketCap)
+  const cryptoAMarketCap = parseFloat(cryptoAData.marketCapUsd);
+  const cryptoBMarketCap = parseFloat(cryptoBData.marketCapUsd);
   if (cryptoAMarketCap > cryptoBMarketCap) {
     const newMultiplier =
       "(" + (cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
     spanElement.classList.add("percent-green");
     listElement.textContent = `${cryptoA}'s market cap is `;
-    paraElement.textContent = ` larger than ${cryptoB}'s market cap.`
+    paraElement.textContent = ` larger than ${cryptoB}'s market cap.`;
     return newMultiplier;
-  } else if (cryptoAMarketCap < cryptoBMarketCap) {
+  } else {
     const newMultiplier =
-    "(" + parseFloat(cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
+      "(" + parseFloat(cryptoAMarketCap / cryptoBMarketCap).toFixed(2) + "x)";
     spanElement.classList.add("percent-red");
     listElement.textContent = `${cryptoA}'s market cap is `;
-    paraElement.textContent = ` smaller than ${cryptoB}'s market cap.`
+    paraElement.textContent = ` smaller than ${cryptoB}'s market cap.`;
     return newMultiplier;
   }
 }
