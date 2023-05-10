@@ -170,6 +170,10 @@ function compareBtnHandler(e) {
   fetch(topTwentyCryptoApi)
     .then((resp) => resp.json())
     .then((topTwentyCryptosArr) => {
+      if(compareResultsDiv.hasChildNodes()){
+        compareResultsDiv.removeChild(compareResultsDiv.firstChild)
+        compareResultsDiv.removeChild(compareResultsDiv.lastChild)
+      }
       if (cryptoSearchA.value && cryptoSearchB.value) {
         const spanPercent = document.createElement("span");
         const newPrice = compareMarketCap(
@@ -203,7 +207,7 @@ function compareBtnHandler(e) {
     .catch(error=>{
       alert(error)
     });
-}
+  }
 
 function searchEventHandler(e) {
   const cryptoA = cryptoSearchA.value;
