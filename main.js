@@ -293,8 +293,8 @@ function marketCapDifference(
   const cryptoBData = topTwentyCryptosArr.find(
     (crypto) => crypto.name === cryptoB
   );
-  const cryptoAMarketCap = cryptoAData.marketCapUsd;
-  const cryptoBMarketCap = cryptoBData.marketCapUsd;
+  const cryptoAMarketCap = parseFloat(cryptoAData.marketCapUsd);
+  const cryptoBMarketCap = parseFloat(cryptoBData.marketCapUsd);
   console.log(cryptoAMarketCap)
   console.log(cryptoBMarketCap)
   if (cryptoAMarketCap > cryptoBMarketCap) {
